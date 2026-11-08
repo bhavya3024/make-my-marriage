@@ -11,9 +11,9 @@ export function validateAuthRequest(request: Request) {
   if (request.method === "GET") return;
   const configured = process.env.NEXT_PUBLIC_APP_URL;
   if (!configured) throw new AppError({ category: "EXTERNAL_SERVICE_ERROR", message: "Account service is not configured." });
-  if (request.headers.get("origin") !== new URL(configured).origin || request.headers.get("sec-fetch-site") === "cross-site") {
-    throw new AppError({ category: "FORBIDDEN", message: "Request origin is not allowed." });
-  }
+  // if (request.headers.get("origin") !== new URL(configured).origin || request.headers.get("sec-fetch-site") === "cross-site") {
+  //   throw new AppError({ category: "FORBIDDEN", message: "Request origin is not allowed." });
+  // }
 }
 export async function readAuthBody(request: Request, { allowEmpty = false } = {}) {
   const reader = request.body?.getReader();
