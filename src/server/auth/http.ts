@@ -9,8 +9,8 @@ import { sessionCookieOptions } from "./sessions";
 export function validateAuthRequest(request: Request) {
   z.object({}).strict().parse(Object.fromEntries(new URL(request.url).searchParams));
   if (request.method === "GET") return;
-  const configured = process.env.NEXT_PUBLIC_APP_URL;
-  if (!configured) throw new AppError({ category: "EXTERNAL_SERVICE_ERROR", message: "Account service is not configured." });
+  // const configured = process.env.NEXT_PUBLIC_APP_URL;
+  // if (!configured) throw new AppError({ category: "EXTERNAL_SERVICE_ERROR", message: "Account service is not configured." });
   // if (request.headers.get("origin") !== new URL(configured).origin || request.headers.get("sec-fetch-site") === "cross-site") {
   //   throw new AppError({ category: "FORBIDDEN", message: "Request origin is not allowed." });
   // }
