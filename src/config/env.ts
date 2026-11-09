@@ -29,6 +29,7 @@ export function getDatabaseEnv(): DatabaseEnv {
 export function getAuthEnv(): AuthEnv {
   if (!cachedAuthEnv) {
     const result = authEnvSchema.safeParse(process.env);
+    console.log("Auth env parse result:", result);
     if (!result.success) throw new AppError({ category: "EXTERNAL_SERVICE_ERROR", message: "Account service is not configured." });
     cachedAuthEnv = result.data;
   }
