@@ -1,0 +1,35 @@
+name: Keep backend warm
+
+# Pings a lightweight, database-touching endpoint on a schedule so the serverless
+# functions and the MongoDB connection stay warm, avoiding multi-second cold starts
+# on the first real request. The public invitation lookup returns 404 for a dummy
+# token but still boots the function and connects to the database.
+#
+# Override the target without editing this file by setting a repository variable
+# named WARM_URL (Settings -> Secrets and variables -> Actions -> Variables).
+
+on:
+  schedule:
+    # Every 5 minutes. GitHub may delay scheduled runs under load; that is fine for keep-warm.
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: keep-warm
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend
+        env:
+          WARM_URL: ${{ vars.WARM_URL || 'https://make-my-marriage-git-dev-bhavya-dhimans-projects-bacbf12a.vercel.app/api/public/invitations/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' }}
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 70 "$WARM_URL")
+          echo "warm ping -> HTTP $code"
+          # 2xx/404 both mean the function + DB answered; anything else is a real problem.
+          case "$code" in
+            2??|404) exit 0 ;;
+            *) echo "Unexpected status $code"; exit 1 ;;
+          esac
