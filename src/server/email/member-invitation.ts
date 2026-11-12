@@ -5,7 +5,7 @@ import { AppError } from "@/server/http/app-error";
 export function getInvitationEmailConfig() {
   const result = z.object({
     RESEND_API_KEY: z.string().trim().min(1),
-    RESEND_FROM_EMAIL: z.string().trim().min(1).refine(value => !/[\r\n]/.test(value),
+    RESEND_FROM_EMAIL: z.string().trim().min(1).refine(value => !/[\r\n]/.test(value)),
     NEXT_PUBLIC_APP_URL: z.url().refine(value => ["http:", "https:"].includes(new URL(value).protocol)),
   }).safeParse(process.env);
   if (!result.success) throw new AppError({ category: "EXTERNAL_SERVICE_ERROR", message: "Invitation email is not configured yet. Please try again once email delivery is set up." });
